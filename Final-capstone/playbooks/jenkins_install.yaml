@@ -1,0 +1,33 @@
+- name: Install Jenkins on VM
+  hosts: vm01
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Copy Jenkins GPG key to target machine
+      copy:
+        src: ~/.gnupg/jenkins.io.key
+        dest: /tmp/jenkins.io.key
+
+    - name: Add Jenkins GPG key
+      apt_key:
+        url: https://pkg.jenkins.io/debian/jenkins.io.key
+        state: present
+
+    - name: Add Jenkins apt repository
+      apt_repository:
+        repo: 'deb https://pkg.jenkins.io/debian-stable binary/'
+        state: present
+        filename: 'jenkins'
+        mode: '0644'
+
+
+
+  roles:
+    - geerlingguy.java
+    - geerlingguy.jenkins
+
